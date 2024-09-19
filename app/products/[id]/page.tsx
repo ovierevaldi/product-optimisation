@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
+import Image from 'next/image';
 
 interface Product {
     id: string;
@@ -42,11 +43,13 @@ const ProductDetail = () => {
             <div className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center">
                 <AliceCarousel
                     items={productDetail.images.map((imageSrc, index) => (
-                        <img
+                        <Image
                             key={index}
                             src={imageSrc}
                             alt={`${productDetail.name} image ${index + 1}`}
-                            className="w-full h-60 object-cover rounded-md"
+                            width={600} // Set a width
+                            height={240} // Set a height
+                            className="object-cover rounded-md" // Note: Width and height are required for Next.js Image
                         />
                     ))}
                     autoPlay
@@ -57,7 +60,6 @@ const ProductDetail = () => {
                         0: { items: 1 },
                         1024: { items: 1 },
                     }}
-                    className="mb-4 w-full"
                 />
                 <h1 className="text-3xl font-bold mb-2">{productDetail.name}</h1>
                 <p className="text-gray-700 mb-4">{productDetail.description}</p>

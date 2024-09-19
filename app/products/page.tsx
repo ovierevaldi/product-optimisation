@@ -1,8 +1,24 @@
 'use client'
 
-import Image from "next/image";
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+
+interface Product {
+    images: string[];
+    title: string;
+    price: number;
+    description: string;
+    id: number;
+    // Add other properties as needed
+}
+
+interface Category {
+    name: string;
+    id: number;
+    // Add other properties as needed
+}
+
 
 const Product = () => {
     const [products, setProducts] = useState([]);
@@ -21,7 +37,7 @@ const Product = () => {
             setCategories(data);
         };
 
-        fetchProducts(itemsPerPage, currentPage);
+        fetchProducts(itemsPerPage, 1);
         fetchCategories();
     }, []);
 
@@ -41,9 +57,9 @@ const Product = () => {
     const filterProduct = async (sortOrder: string) => {
         // You can implement fetching logic if you want to filter based on categories
         // For now, we will just sort the current products
-        let sortedProducts = [...products]; // Create a copy of products for sorting
+        const sortedProducts = [...products]; // Create a copy of products for sorting
 
-        sortedProducts.sort((a: any, b: any) => {
+        sortedProducts.sort((a: Product, b: Product) => {
             return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
         });
 
@@ -51,7 +67,7 @@ const Product = () => {
     };
 
 
-    const handleCategoryChange = (event: any) => {
+    const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedCategory(event.target.value);
         if(event.target.value != 'all')
             getProductByCategory(event.target.value); 
@@ -61,7 +77,7 @@ const Product = () => {
         // Optionally filter products based on selected category
     };
 
-    const handleSortChange = (event: any) => {
+    const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSortOrder(event.target.value);
         filterProduct(event.target.value);
     };
@@ -83,7 +99,7 @@ const Product = () => {
                         onChange={handleCategoryChange}
                     >
                         <option value="all">All</option>
-                        {categories.map((category: any, index) => (
+                        {categories.map((category: Category, index) => (
                             <option key={index} value={category.name}>{category.name}</option>
                         ))}
                 </select>
@@ -104,10 +120,16 @@ const Product = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        {products.map((product: any) => (
+        {products.map((product: Product) => (
             <Link key={product.id} href={`/products/${product.id}`}>
                 <div className="bg-white rounded-lg shadow-md p-4">
-                    <img src={product.images} alt="Product 1" className="w-full h-48 object-cover rounded-md mb-4"></img>
+                    <Image
+                        src={product.images[0]} // Assuming product.images is a valid image source
+                        alt="Product 1"
+                        width={600} // Set a width
+                        height={192} // Set a height (adjust based on your design)
+                        className="object-cover rounded-md mb-4" // Note: Width and height are required for Next.js Image
+                    />
                     <h2 className="text-xl font-semibold">{product.title}</h2>
                     <p className="text-green-600 text-lg font-bold">{product.price}</p>
                     <p className="text-gray-700">{product.description}</p>
